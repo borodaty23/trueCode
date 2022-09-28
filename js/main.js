@@ -28,17 +28,30 @@ const init = () => {
 const getUsers = async (url, usersData) => {
   const cors_Api = "https://cors-anywhere.herokuapp.com/";
   try {
+    preLouderStart();
     let response = await fetch(cors_Api + url);
     if (response.ok) {
       let result = await response.json();
+      preLouderStop();
       console.log(result);
       okReq(result, usersData);
     } else {
+      preLouderStop();
       badReq(response);
     }
   } catch (e) {
     badReq(e);
   }
+};
+
+const preLouderStart = () => {
+  const louder = document.querySelector(".preLoader");
+  louder.setAttribute("style", "display:flex");
+};
+
+const preLouderStop = () => {
+  const louder = document.querySelector(".preLoader");
+  louder.setAttribute("style", "display:none");
 };
 
 const badReq = (response) => {
