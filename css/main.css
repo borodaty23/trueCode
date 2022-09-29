@@ -1,34 +1,25 @@
 *{
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 .header{
-    height: 80px;
-    background-color: black;
-    color: aqua;
-    
-    
+  height: 80px;
+  background-color: black;
+  color: aqua;
 }
 .header-item{
-   
-    
-    justify-content: center;
-    height: 60px;
+  justify-content: center;
+  height: 60px;
 }
 .header-item input{
-    
-}
-.header-item input{
-    display: flex;
-    
-    margin: 5px;
+  display: flex;
+  margin: 5px;
 }
 .user{
-    display: flex;
-    justify-content: center;
-    background-color: rgba(42, 66, 97,0.8);
-    color: aqua;
-    
+  display: flex;
+  justify-content: center;
+  background-color: rgba(42, 66, 97,0.8);
+  color: aqua;
 }
 .peoples-title{
     font-size: 20px;
@@ -48,7 +39,7 @@ footer{
     background-color: black;
 }
 /*PopUp*/
-.peoples-popup{
+.modal{
     display: none;
     position: fixed;
     z-index: 1;
@@ -59,7 +50,7 @@ footer{
     overflow: auto;
     background-color: rgba(0,0,0,0.9)
 }
-.peoples-popup-content{
+.modal-content{
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;

@@ -1,27 +1,29 @@
-var users_Api =
+const users_Api =
   "http://api.randomuser.me/1.0/?results=50&nat=gb,us&inc=gender,name,location,email,phone,picture"; // думаю что делать с этим)
 
-const init = () => {
-  let usersData = [];
+const commonVariables = () => {
+  const modal = document.querySelector(".modal");
+  const louder = document.querySelector(".preLoader");
   const usersBlocks = document.querySelector(".users-blocks");
+  return { modal, louder, usersBlocks };
+};
+
+const init = () => {
+  const usersData = [];
+  const { usersBlocks } = commonVariables();
+  const sortAlphabeticallyBtn = document.getElementById("sortAlphabetically");
+  const backSortBtn = document.getElementById("backSort");
 
   getUsers(users_Api, usersData);
 
-  document.querySelector(".close").addEventListener("click", closeModal);
-  document
-    .getElementById("sortAlphabetically")
-    .addEventListener("click", () => sortAlphabetically(usersData));
-  document
-    .getElementById("backSort")
-    .addEventListener("click", () => backSort(usersData));
-
-  // usersBlocks.addEventListener("click", () => {
-  //   event.target.classList.value === "user" && renderModal(usersData);
-  // });
-  usersBlocks.addEventListener("click", () => {
+  sortAlphabeticallyBtn.addEventListener("click", () =>
+    sortAlphabetically(usersData)
+  );
+  backSortBtn.addEventListener("click", () => backSort(usersData));
+  usersBlocks.addEventListener("click", (event) => {
     (event.target.classList.value === "peoples-title" ||
       event.target.classList.value === "img-medium") &&
-      renderModal(usersData);
+      renderModal(usersData, event);
   });
 };
 
@@ -45,12 +47,12 @@ const getUsers = async (url, usersData) => {
 };
 
 const preLouderStart = () => {
-  const louder = document.querySelector(".preLoader");
+  const { louder } = commonVariables();
   louder.setAttribute("style", "display:flex");
 };
 
 const preLouderStop = () => {
-  const louder = document.querySelector(".preLoader");
+  const { louder } = commonVariables();
   louder.setAttribute("style", "display:none");
 };
 
@@ -62,16 +64,16 @@ const badReq = (response) => {
   }
 };
 
-function okReq(result, usersData) {
+const okReq = (result, usersData) => {
   usersData.push(...result.results);
   renderUsers(usersData);
-}
+};
 
 const renderUsers = (usersData) => {
-  const usersBlock = document.querySelector(".users-blocks");
-  usersBlock.innerHTML = "";
+  const { usersBlocks } = commonVariables();
+  usersBlocks.innerHTML = "";
   usersData.forEach((user) => {
-    usersBlock.innerHTML += `
+    usersBlocks.innerHTML += `
       <div class="user" id="${user.location.postcode}">
         <img src="${user.picture.medium}" alt="Аватарка" class="img-medium" />
         <span class="peoples-title">${user.name.title}, ${user.name.first} ${user.name.last}</span>
@@ -90,36 +92,36 @@ const backSort = (usersData) => {
   renderUsers(usersData);
 };
 
-function renderModal(usersData) {
-  const modalData = {
-    modalWrap: document.querySelector(".peoples-popup"),
-    imagesLarge: document.querySelector(".img-large"),
-    title: document.querySelector(".popup-title"),
-    street: document.querySelector(".people-street"),
-    city: document.querySelector(".people-city"),
-    state: document.querySelector(".people-state"),
-    email: document.querySelector(".people-email"),
-    phone: document.querySelector(".people-telephone"),
-  };
+const renderModal = (usersData, event) => {
+  const { modal } = commonVariables();
+  const userCard = event.target.closest(".user");
+  const currentUser = usersData.find(
+    (user) => userCard.id == user.location.postcode // == потому что из за рандомного апи приходитя ID разных типов
+  );
 
-  modalData.modalWrap.setAttribute("style", "display:block");
-  let userCard = event.target.closest(".user");
+  modal.setAttribute("style", "display:block");
 
-  usersData.forEach((user) => {
-    if (+userCard.id === user.location.postcode) {
-      modalData.title.innerHTML = `Full name: ${user.name.title} . ${user.name.first} ${user.name.last}`;
-      modalData.city.innerHTML = `City: ${user.location.city}`;
-      modalData.state.innerHTML = `State: ${user.location.state}`;
-      modalData.email.innerHTML = `Mail: ${user.email}`;
-      modalData.street.innerHTML = `street: ${user.location.street}`;
-      modalData.phone.innerHTML = user.phone;
-      modalData.imagesLarge.src = user.picture.large;
-    }
-  });
-}
+  modal.innerHTML = `
+    <div class="modal-content">
+      <img src="${currentUser.picture.large}" alt="Аватарка" class="img-large" />
+      <span class="close">x</span>
+      <p class="modal-title">Full name: ${currentUser.name.title} . ${currentUser.name.first} ${currentUser.name.last}</p>
+      <p class="modal-street">street: ${currentUser.location.street}</p>
+      <p class="modal-city">City: ${currentUser.location.city}</p>
+      <p class="modal-state">State: ${currentUser.location.state}</p>
+      <p class="modal-email">Mail: ${currentUser.email}</p>
+      <p class="modal-telephone">${currentUser.phone}</p>
+    </div>
+    `;
+
+  const closeButton = document.querySelector(".close"); // если разместить раньше то querySelector не находит ноду
+  closeButton.addEventListener("click", closeModal);
+};
 
 const closeModal = () => {
-  document.querySelector(".peoples-popup").style.display = "none";
+  const { modal } = commonVariables();
+  modal.innerHTML = "";
+  modal.style.display = "none";
 };
 
 init();
